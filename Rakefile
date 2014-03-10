@@ -1,2 +1,2 @@
-require './web'
-require 'sinatra/activerecord/rake'
+# require './web'
+# require 'sinatra/activerecord/rake'
