@@ -1,6 +1,33 @@
 require 'sinatra'
-configure { set :server, :puma }
+configure do
+    require 'redis'    
+    # uri = URI.parse(ENV["REDISCLOUD_URL"])
+    # $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+    set :server, :puma
+end
+
 
 get '/' do
-  "Hello, world\n" 
+	erb :index
+
+
+	# redis = Redis.new
+	# redis.set("mykey", "hello world2")
+	# redis.get("mykey")
+  # "Hello, world\n" 
 end
+
+post '/post_message' do
+	redis = Redis.new
+	# redis.set("dmd_id", params[:element_1])
+	redis.set("message", params[:element_2])
+	# redis.set("buzzer", params[:buzzer])
+
+	"Thank you, message posted."
+end
+
+get '/get_message' do
+	redis = Redis.new
+	redis.get("message") + "\n"
+end
+
