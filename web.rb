@@ -5,7 +5,7 @@ configure do
     uri = URI.parse(ENV["REDISCLOUD_URL"])
     $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
      }
-    configure(:development){ redis = Redis.new } 
+    configure(:development){ $redis = Redis.new } 
     
     set :server, :puma
 end
@@ -21,7 +21,7 @@ end
 post '/post_message' do
 	# redis = Redis.new
 	# redis.set("dmd_id", params[:element_1])
-	redis.set("message", params[:element_2])
+	$redis.set("message", params[:element_2])
 	# redis.set("buzzer", params[:buzzer])
 
 	"Thank you, message posted."
@@ -29,6 +29,6 @@ end
 
 get '/get_message' do
 	# redis = Redis.new
-	redis.get("message") + "\n"
+	$redis.get("message") + "\n"
 end
 
