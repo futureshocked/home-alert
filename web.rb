@@ -30,6 +30,12 @@ post '/post_message' do
 end
 
 get '/get_message/:dmd_id' do	
-	$redis.get(params[:dmd_id]) + "\n"
+	require "json"
+	response = JSON.parse($redis.get(params[:dmd_id]))
+	if response["buzzer"] 
+		response["message"] + "\n1\n"
+	else
+		response["message"] + "\n0\n"
+	end
 end
 
