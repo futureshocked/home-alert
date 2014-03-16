@@ -33,9 +33,9 @@ get '/get_message/:dmd_id' do
 	require "json"
 	response = JSON.parse($redis.get(params[:dmd_id]))
 	if response["buzzer"] 
-		response["message"] + "\n1\n"
+		"1" + response["message"] + "\n"
 	else
-		response["message"] + "\n0\n"
+		"0" + response["message"] + "\n"
 	end
 end
 
