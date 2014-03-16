@@ -1,10 +1,10 @@
 require 'sinatra'
 configure do
     require 'redis'    
-    configure(:production){  
-    uri = URI.parse(ENV["REDISCLOUD_URL"])
-    $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
-     }
+    configure(:production) do    	
+		    uri = URI.parse(ENV["REDISCLOUD_URL"])
+		    $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+     	end
     configure(:development){ $redis = Redis.new } 
     
     set :server, :puma
@@ -12,23 +12,24 @@ end
 
 
 get '/' do
-	erb :index
-	# redis.set("mykey", "hello world2")
-	# redis.get("mykey")
-  # "Hello, world\n" 
+	erb :index	
 end
 
 post '/post_message' do
-	# redis = Redis.new
+	require "json"
+	erb :post_message	
+	data = { params[:element_1] => {}}
+	$redis.set( params[:element_1], { "message" => params[:element_2], 
+									 "buzzer" => params[:element_3_1]}.to_json)
+
 	# redis.set("dmd_id", params[:element_1])
-	$redis.set("message", params[:element_2])
+	# $redis.set("message", params[:element_2])
 	# redis.set("buzzer", params[:buzzer])
 
 	"Thank you, message posted."
 end
 
-get '/get_message' do
-	# redis = Redis.new
-	$redis.get("message") + "\n"
+get '/get_message/:dmd_id' do	
+	$redis.get(params[:dmd_id]) + "\n"
 end
 
