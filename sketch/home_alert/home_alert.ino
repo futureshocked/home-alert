@@ -8,7 +8,7 @@
 #include <Wire.h>
 #include "RTClib.h"
 #include "DHT.h"
-#define DHTPIN 2
+
 RTC_DS1307 rtc;
 
 //Fire up the DMD library as dmd
@@ -17,10 +17,12 @@ RTC_DS1307 rtc;
 DMD dmd(DISPLAYS_ACROSS, DISPLAYS_DOWN);
 
 #define DHTTYPE DHT22 
+#define DHTPIN 2
 DHT dht(DHTPIN, DHTTYPE);
 
+#define HW_ID        "1"
 #define WEBSITE      "alert.arduinosbs.com"
-#define WEBPAGE      "/get_message/1"
+#define WEBPAGE      "/get_message/"
 #define IDLE_TIMEOUT_MS  3000 
 
 byte mac[] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 };
@@ -74,7 +76,6 @@ void loop(void)
    process_response();
    display_environmental_info();
    show_time();
-   delay( 10000 );      
 }
 
 void setup_DMD(){
@@ -92,7 +93,7 @@ void display_marquee(String &message)
      long timer=start;
      boolean ret=false;
      while(!ret){
-       if ((timer+30) < millis()) {
+       if ((timer+100) < millis()) {
          ret=dmd.stepMarquee(-1,0);
          timer=millis();
        }
@@ -124,10 +125,10 @@ void show_time(){
      minute = String(byteMinute,DEC); 
   }
   
-  dmd.drawChar(  0,  3, hour[0], GRAPHICS_NORMAL );
-  dmd.drawChar(  7,  3, hour[1], GRAPHICS_NORMAL );
-  dmd.drawChar( 17,  3, minute[0], GRAPHICS_NORMAL );
-  dmd.drawChar( 25,  3, minute[1], GRAPHICS_NORMAL );
+  dmd.drawChar(  0,  0, hour[0], GRAPHICS_NORMAL );
+  dmd.drawChar(  7,  0, hour[1], GRAPHICS_NORMAL );
+  dmd.drawChar( 17,  0, minute[0], GRAPHICS_NORMAL );
+  dmd.drawChar( 25,  0, minute[1], GRAPHICS_NORMAL );
    
   for (int i=0;i<31;i++)
   {      
@@ -196,7 +197,6 @@ void process_response(){
     get_request           = "";     
     while (client.available()) {   
        char c = client.read();
-       Serial.print(c);
        if(reading && c == '\n') 
         { Serial.println("1");
           reading = false;  
@@ -205,24 +205,19 @@ void process_response(){
         }        
 
         if(reading){ 
-          Serial.println("2");
           get_request += c;
          }      
        if (reading && c=='\n')
        {
-          Serial.println("3");
           break; 
        }       
        if (c == '\n' && currentLineIsBlank)  {
-         Serial.println("4");
          reading = true; // Found the body of the server response, start reading
        }
        if (c == '\n') {
-         Serial.println("5");
          currentLineIsBlank = true;
        } 
        else if (c != '\r') {
-         Serial.println("6");
          currentLineIsBlank = false;
        }
     }
@@ -249,6 +244,7 @@ void make_get_request(){
     Serial.println(F("connected"));
     client.print(F("GET ")); 
     client.print(WEBPAGE);
+    client.print(HW_ID);
     client.print(F(" HTTP/1.1\r\n"));
     client.print("Host: ");
     client.print(WEBSITE);
