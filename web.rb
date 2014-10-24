@@ -54,5 +54,5 @@ get '/cricket_match_list' do
 	a.get("http://cricscore-api.appspot.com/csa")
 	j = a.page.body
 	b = JSON.parse(j)
-	b.each {|r| puts r["id"] + " : " + r["t2"] + " vs " + r["t1"]}
+	b.each {|r| puts r["id"].to_s + " : " + r["t2"] + " vs " + r["t1"]}
 end
