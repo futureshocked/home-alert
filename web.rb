@@ -36,10 +36,11 @@ get '/get_message/:dmd_id' do
 	end
 end
 
-get '/cricket_match_description/:match_id]' do
+get '/cricket_match_description/:match_id' do
 	require 'json'
 	require 'mechanize'
 	require 'open-uri'
+	a = Mechanize.new
 	a.get("http://cricscore-api.appspot.com/csa?id=#{params[:match_id]}")
 	scores = a.page.body
 	m_s = JSON.parse(scores)
@@ -54,5 +55,8 @@ get '/cricket_match_list' do
 	a.get("http://cricscore-api.appspot.com/csa")
 	j = a.page.body
 	b = JSON.parse(j)
-	b.each {|r| puts r["id"].to_s + " : " + r["t2"] + " vs " + r["t1"]}
+	response = ""
+	b.each { |r| response += r["id"].to_s + " : " + r["t2"] + " vs " + r["t1"] + "\n"}
+	puts response
+	response
 end
