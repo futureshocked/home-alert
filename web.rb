@@ -44,7 +44,8 @@ get '/cricket_match_description/:match_id' do
 	a.get("http://cricscore-api.appspot.com/csa?id=#{params[:match_id]}")
 	scores = a.page.body
 	m_s = JSON.parse(scores)
-	m_s[0]["de"]
+	"0" + m_s[0]["de"]  #Including the zero at the start because the Arduino sketch is
+	                    #expecting it
 end
 
 get '/cricket_match_list' do
@@ -58,5 +59,6 @@ get '/cricket_match_list' do
 	response = ""
 	b.each { |r| response += r["id"].to_s + " : " + r["t2"] + " vs " + r["t1"] + "\n"}
 	puts response
-	response
+	"0" + response    #Including the zero at the start because the Arduino sketch is
+	                  #expecting it
 end
